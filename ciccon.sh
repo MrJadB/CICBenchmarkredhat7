@@ -116,9 +116,19 @@ for file in "${config_files[@]}"; do
     add_separator
     echo "File: $file" >> "$output_file"
     if [ -f "$file" ]; then
-        cat "$file" >> "$output_file"
-        if [[ "$file" == "/etc/passwd" || "$file" == "/etc/shadow" ]]; then
-            cat "$file" >> "$passuser_file"
+        # Check if the file is /etc/default/ufw
+        if [ "$file" == "/etc/default/ufw" ]; then
+            # Check if ufw is enabled
+            if ufw status | grep -q "Status: active"; then
+                cat "$file" >> "$output_file"
+            else
+                echo "UFW is not enabled" >> "$output_file"
+            fi
+        else
+            cat "$file" >> "$output_file"
+            if [[ "$file" == "/etc/passwd" || "$file" == "/etc/shadow" ]]; then
+                cat "$file" >> "$passuser_file"
+            fi
         fi
     else
         echo "File not found: $file" >> "$output_file"
