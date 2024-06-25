@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # Output file
@@ -134,3 +135,5 @@ for file in "${config_files[@]}"; do
         echo "File not found: $file" >> "$output_file"
     fi
 done
+
+echo "Configuration files and system information have been saved."
