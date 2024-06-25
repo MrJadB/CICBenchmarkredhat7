@@ -92,7 +92,7 @@ config_files=(
 
 # Function to add section separator
 add_separator() {
-    echo "======================================" >> "$output_dir/$filename.txt"
+    echo "======================================" >> "$output_dir/configsave$filename.txt"
 }
 
 # Create output directory if it does not exist
@@ -104,7 +104,7 @@ for file in "${config_files[@]}"; do
     filename=$(basename "$file")
     
     # Create output file path
-    output_file="$output_dir/$filename.txt"
+    output_file="$output_dir/configsave$filename.txt"
     
     # Add separator and file path
     add_separator
