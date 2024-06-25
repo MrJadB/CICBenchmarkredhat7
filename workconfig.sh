@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Directory to save the config files
-output_dir="Configsave"
+# Create the Configsave directory if it doesn't exist
+mkdir -p Configsave
 
-# List of configuration files
-config_files=(
+# Define the file list
+files=(
     "/etc/login.defs"
     "/etc/pam.d/system-auth"
     "/etc/security/pwquality.conf"
@@ -12,9 +12,9 @@ config_files=(
     "/etc/security/faillock.conf"
     "/etc/passwd"
     "/etc/group"
-    "/etc/audit/audit.conf"
+    "/etc/audit/auditd.conf"
     "/var/log/secure"
-    "/etc/syslog.conf"
+    "/etc/rsyslog.conf"
     "/etc/rsyslog.conf"
     "/etc/ntp.conf"
     "/etc/snmp/snmpd.conf"
@@ -25,39 +25,31 @@ config_files=(
     "/etc/sysctl.conf"
 )
 
-# Create output directory if it does not exist
-mkdir -p "$output_dir"
+# Get the current date and time
+timestamp=$(date "+%Y-%m-%d %H:%M:%S")
 
-# Function to add section separator
-add_separator() {
-    echo "======================================" >> "$1"
-}
+# Get system information
+sys_info=$(uname -a)
 
-# Function to save configuration file content
-save_config() {
-    local file=$1
-    local output_file="$output_dir/configsave$(basename $file).txt"
+# Save system information
+echo "=$timestamp" > Configsave/systeminfo.txt
+echo "System Information:" >> Configsave/systeminfo.txt
+echo "$sys_info" >> Configsave/systeminfo.txt
 
-    # Add current date and time
-    add_separator "$output_file"
-    echo "Date and Time: $(date)" >> "$output_file"
+# Iterate over the file list and save their contents
+for file in "${files[@]}"; do
+    # Check if the file exists
+    if [[ -f "$file" ]]; then
+        # Get the base name of the file
+        filename=$(basename "$file")
 
-    # Add system information
-    add_separator "$output_file"
-    echo "System Information:" >> "$output_file"
-    uname -a >> "$output_file"
-
-    # Add file content
-    add_separator "$output_file"
-    echo "File: $file" >> "$output_file"
-    if [ -f "$file" ]; then
-        cat "$file" >> "$output_file"
+        # Save the file contents
+        echo "=" >> "Configsave/configsave${filename}.txt"
+        echo "Contents of $file:" >> "Configsave/configsave${filename}.txt"
+        cat "$file" >> "Configsave/configsave${filename}.txt"
     else
-        echo "File not found: $file" >> "$output_file"
+        echo "File $file does not exist."
     fi
-}
-
-# Loop through the list of configuration files and save their content
-for file in "${config_files[@]}"; do
-    save_config "$file"
 done
+
+echo "Configuration files have been saved."
