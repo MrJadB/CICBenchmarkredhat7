@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Directory to save configuration files
 output_dir="cisavecon"
 
@@ -12,16 +14,16 @@ config_files=(
     "/etc/issue"
     "/etc/issue.net"
     "/etc/yum.conf"
-    "/etc/yum.repos.d/*.repo"
+    "/etc/yum.repos.d"
     "/etc/postfix/main.cf"
     "/etc/sysconfig/chronyd"
     "/etc/chrony.conf"
     "/etc/ssh/sshd_config"
-    "/etc/modprobe.d/*.conf"
+    "/etc/modprobe.d"
     "/etc/default/ufw"
     "/etc/ufw/sysctl.conf"
     "/etc/sysctl.conf"
-    "/etc/sysctl.d/*.conf"
+    "/etc/sysctl.d"
     "/etc/nftables/nftables.rules"
     "/etc/sysconfig/nftables.conf"
     "/etc/sysconfig/iptables"
@@ -39,11 +41,11 @@ config_files=(
     "/etc/security/pwquality.conf"
     "/etc/bashrc"
     "/etc/profile"
-    "/etc/profile.d/*.sh"
+    "/etc/profile.d"
     "/etc/login.defs"
     "/etc/securetty"
     "/etc/security/limits.conf"
-    "/etc/security/limits.d/*.conf"
+    "/etc/security/limits.d"
     "/etc/systemd/system.conf"
     "/etc/systemd/user.conf"
     "/etc/gshadow"
@@ -67,8 +69,7 @@ config_files=(
     "/var/log/tallylog"
     "/var/log/faillog"
     "/var/log/lastlog"
-    "/etc/dconf/db/*.d"
-    "/etc/dconf/profile"
+    "/etc/dconf/db"
     "/etc/cron.hourly"
     "/etc/cron.daily"
     "/etc/cron.weekly"
@@ -77,51 +78,55 @@ config_files=(
     "/etc/sudoers.d"
     "/etc/skel"
     "/etc/ssh/sshd_config.d"
-    "/etc/security/limits.d"
     "/etc/sysconfig"
-    "/etc/sysconfig/network-scripts/"
-    "/etc/sysctl.d/"
-    "/etc/dconf/db/*.d"
-    "/etc/modprobe.d/"
-    "/etc/dconf/db/gdm.d/*"
-    "/etc/sysctl.d/"
-    "/etc/dconf/db/*.d"
+    "/etc/sysconfig/network-scripts"
 )
-
-# Function to add section separator
-add_separator() {
-    echo "======================================" >> "$output_dir/configsave$filename.txt"
-}
 
 # Create output directory if it does not exist
 mkdir -p "$output_dir"
 
-# Loop through configuration files
-for file in "${config_files[@]}"; do
-    # Extract filename from path
-    filename=$(basename "$file")
+# Function to add section separator
+add_separator() {
+    echo "======================================" >> "$1"
+}
+
+# Function to save file content
+save_file_content() {
+    local file_path="$1"
+    local output_file="$2"
     
-    # Create output file path
-    output_file="$output_dir/configsave$filename.txt"
+    add_separator "$output_file"
+    echo "File: $file_path" >> "$output_file"
     
-    # Add separator and file path
-    add_separator
-    echo "File: $file" >> "$output_file"
-    
-    if [ -f "$file" ]; then
+    if [ -f "$file_path" ]; then
         # Check if the file is /etc/default/ufw
-        if [ "$file" == "/etc/default/ufw" ]; then
+        if [ "$file_path" == "/etc/default/ufw" ]; then
             # Check if ufw is enabled
             if ufw status | grep -q "Status: active"; then
-                cat "$file" >> "$output_file"
+                cat "$file_path" >> "$output_file"
             else
                 echo "UFW is not enabled" >> "$output_file"
             fi
         else
-            cat "$file" >> "$output_file"
+            cat "$file_path" >> "$output_file"
         fi
     else
-        echo "File not found: $file" >> "$output_file"
+        echo "File not found: $file_path" >> "$output_file"
+    fi
+}
+
+# Loop through configuration files
+for path in "${config_files[@]}"; do
+    if [ -d "$path" ]; then
+        find "$path" -type f -name "*.conf" | while read -r file; do
+            filename=$(basename "$file")
+            output_file="$output_dir/configsave$filename.txt"
+            save_file_content "$file" "$output_file"
+        done
+    else
+        filename=$(basename "$path")
+        output_file="$output_dir/configsave$filename.txt"
+        save_file_content "$path" "$output_file"
     fi
 done
 
