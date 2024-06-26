@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Output file
-output_file="Configsave/cisavecon.txt"
+# Get the current date in DD_MM_YYYY format
+current_date=$(date "+%d_%m_%Y")
+
+# Define the output file name with the current date
+output_file="Configsave/cisavecon_${current_date}.txt"
 
 # List of configuration files
 config_files=(
@@ -72,3 +75,4 @@ for file in "${config_files[@]}"; do
 done
 
 echo "Configuration files and system information have been saved in: $output_file"
+
