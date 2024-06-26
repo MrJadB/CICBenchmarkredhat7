@@ -35,12 +35,12 @@ sys_info=$(uname -a)
 
 # Save system information and date/time to the output file
 {
-    echo "="
+    echo "=============================="
     echo "Date and Time: $timestamp"
-    echo "="
+    echo "=============================="
     echo "System Information:"
     echo "$sys_info"
-    echo "="
+    echo "=============================="
 } >> "$output_file"
 
 # Iterate over the file list and save their contents to the output file
@@ -49,23 +49,23 @@ for file in "${config_files[@]}"; do
     if [[ -f "$file" ]]; then
         # Save the file contents
         {
-            echo "="
+            echo "=============================="
             echo "#*#*"
             echo "File: $file"
             echo "#*#*"
-            echo "="
+            echo "=============================="
             cat "$file"
-            echo "="
+            echo "=============================="
         } >> "$output_file"
     else
         {
-            echo "="
+            echo "=============================="
             echo "#*#*"
             echo "File: $file"
             echo "#*#*"
-            echo "="
+            echo "=============================="
             echo "File not found: $file"
-            echo "="
+            echo "=============================="
         } >> "$output_file"
         echo "File not found: $file" 1>&2  # Print warning to terminal
     fi
