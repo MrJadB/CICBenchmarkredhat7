@@ -20,7 +20,6 @@ config_files=(
     "/etc/rsyslog.conf"
     "/etc/ntp.conf"
     "/etc/snmp/snmpd.conf"
-    "/etc/snmpd.conf"
     "/etc/motd"
     "/etc/ssh/sshd_config"
     "/etc/issue"
