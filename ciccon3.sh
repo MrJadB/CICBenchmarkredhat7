@@ -3,8 +3,8 @@
 # Output file
 output_file="cicconfig.txt"
 
-# List of configuration files
-config_files=(
+# List of configuration files and directories
+config_paths=(
     "/etc/selinux/config"
     "/boot/grub2/grub.cfg"
     "/boot/grub2/user.cfg"
@@ -14,16 +14,16 @@ config_files=(
     "/etc/issue"
     "/etc/issue.net"
     "/etc/yum.conf"
-    "/etc/yum.repos.d/*.repo"
+    "/etc/yum.repos.d/"
     "/etc/postfix/main.cf"
     "/etc/sysconfig/chronyd"
     "/etc/chrony.conf"
     "/etc/ssh/sshd_config"
-    "/etc/modprobe.d/*.conf"
+    "/etc/modprobe.d/"
     "/etc/default/ufw"
     "/etc/ufw/sysctl.conf"
     "/etc/sysctl.conf"
-    "/etc/sysctl.d/*.conf"
+    "/etc/sysctl.d/"
     "/etc/nftables/nftables.rules"
     "/etc/sysconfig/nftables.conf"
     "/etc/sysconfig/iptables"
@@ -33,6 +33,7 @@ config_files=(
     "/etc/audit/auditd.conf"
     "/etc/audit/audit.rules"
     "/etc/sudoers"
+    "/etc/sudoers.d/"
     "/etc/passwd"
     "/etc/shadow"
     "/etc/rsyslog.conf"
@@ -41,11 +42,11 @@ config_files=(
     "/etc/security/pwquality.conf"
     "/etc/bashrc"
     "/etc/profile"
-    "/etc/profile.d/*.sh"
+    "/etc/profile.d/"
     "/etc/login.defs"
     "/etc/securetty"
     "/etc/security/limits.conf"
-    "/etc/security/limits.d/*.conf"
+    "/etc/security/limits.d/"
     "/etc/systemd/system.conf"
     "/etc/systemd/user.conf"
     "/etc/gshadow"
@@ -69,24 +70,16 @@ config_files=(
     "/var/log/tallylog"
     "/var/log/faillog"
     "/var/log/lastlog"
-    "/etc/dconf/db/*.d"
-    "/etc/dconf/profile"
+    "/etc/dconf/db/"
     "/etc/cron.hourly"
     "/etc/cron.daily"
     "/etc/cron.weekly"
     "/etc/cron.monthly"
     "/etc/cron.d"
-    "/etc/sudoers.d"
     "/etc/skel"
-    "/etc/ssh/sshd_config.d"
+    "/etc/ssh/sshd_config.d/"
     "/etc/sysconfig"
     "/etc/sysconfig/network-scripts/"
-    "/etc/sysctl.d/"
-    "/etc/dconf/db/*.d"
-    "/etc/modprobe.d/"
-    "/etc/dconf/db/gdm.d/*"
-    "/etc/sysctl.d/"
-    "/etc/dconf/db/*.d"
 )
 
 # Create or clear the output file
@@ -103,16 +96,27 @@ echo "System Information:" >> "$output_file"
 uname -a >> "$output_file"
 echo "======================================" >> "$output_file"
 
-# Loop through configuration files
-for path in "${config_files[@]}"; do
-    # Find all matching files if the path contains a wildcard
-    for file in $path; do
+# Function to add section separator
+add_separator() {
+    echo "======================================" >> "$output_file"
+}
+
+# Loop through configuration files and directories
+for path in "${config_paths[@]}"; do
+    # If the path is a directory, find all files within it
+    if [ -d "$path" ]; then
+        files=$(find "$path" -type f)
+    else
+        files="$path"
+    fi
+    
+    for file in $files; do
         if [ -e "$file" ]; then
-            echo "======================================" >> "$output_file"
+            add_separator
             echo "#*#*" >> "$output_file"
             echo "File: $file" >> "$output_file"
             echo "#*#*" >> "$output_file"
-            echo "======================================" >> "$output_file"
+            add_separator
             
             # Check if the file is /etc/default/ufw
             if [ "$file" == "/etc/default/ufw" ]; then
