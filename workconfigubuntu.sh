@@ -22,6 +22,7 @@ config_files=(
     "/etc/audit/auditd.conf"
     #different from Redhat /var/log/auth.log" from /var/log/secure
     "/var/log/auth.log"
+    "/var/log/syslog"
     "/etc/rsyslog.conf"
     "/etc/ntp.conf"
     "/etc/snmp/snmpd.conf"
