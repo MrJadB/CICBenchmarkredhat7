@@ -9,6 +9,7 @@ output_file="Configsave/cisavecon_${current_date}.txt"
 # List of configuration files
 config_files=(
     "/etc/login.defs"
+    #pam.d different from Redhat from only /etc/pam.d/system-auth
     "/etc/pam.d/common-account"
     "/etc/pam.d/common-auth"
     "/etc/pam.d/common-password"
@@ -19,8 +20,8 @@ config_files=(
     "/etc/passwd"
     "/etc/group"
     "/etc/audit/auditd.conf"
+    #different from Redhat /var/log/auth.log" from /var/log/secure
     "/var/log/auth.log"
-    "var/log/syslog"
     "/etc/rsyslog.conf"
     "/etc/ntp.conf"
     "/etc/snmp/snmpd.conf"
