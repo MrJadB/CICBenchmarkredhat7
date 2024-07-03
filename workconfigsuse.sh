@@ -23,7 +23,8 @@ config_files=(
     #different from Redhat /var/log/messages" from /var/log/secure
     "/var/log/messages"
     "/etc/rsyslog.conf"
-    "/etc/ntp.conf"
+    #open SUSE use Chrony instead of ntpsec
+    "/etc/chrony.conf"
     "/etc/snmp/snmpd.conf"
     "/etc/motd"
     "/etc/ssh/sshd_config"
