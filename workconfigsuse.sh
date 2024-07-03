@@ -20,9 +20,8 @@ config_files=(
     "/etc/passwd"
     "/etc/group"
     "/etc/audit/auditd.conf"
-    #different from Redhat /var/log/auth.log" from /var/log/secure
-    "/var/log/auth.log"
-    "/var/log/syslog"
+    #different from Redhat /var/log/messages" from /var/log/secure
+    "/var/log/messages"
     "/etc/rsyslog.conf"
     "/etc/ntp.conf"
     "/etc/snmp/snmpd.conf"
